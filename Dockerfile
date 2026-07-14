@@ -42,4 +42,7 @@ RUN npm install --no-audit --no-fund \
 # edits show up instantly inside the container.
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["bash"]
+CMD ["node", "discord-bot.mjs"]
+
+# To run other tools interactively, override CMD on deploy:
+#   docker run --rm -it career-ops bash
