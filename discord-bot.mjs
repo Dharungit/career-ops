@@ -242,6 +242,11 @@ async function generateCvHtml(reportContent, ctx, jdUrl) {
   if (clean.startsWith('```')) {
     clean = clean.replace(/^```(?:html)?\s*\n?/, '').replace(/\n?```\s*$/, '');
   }
+  clean = clean.replace(/\{\{[A-Z_]+\}\}/g, '');
+  if (clean.includes('{{PHOTO}}')) {
+    clean = clean.replace(/.*\{\{PHOTO\}\}.*\n?/g, '');
+  }
+  clean = clean.replace(/<span class="separator">\|<\/span>\s*<a href=""><\/a>/g, '');
   return clean;
 }
 
