@@ -37,9 +37,9 @@ COPY package.json package-lock.json* ./
 RUN npm install --no-audit --no-fund \
  && npm install --no-audit --no-fund --save-exact playwright@1.58.1
 
-# The rest of the project is bind-mounted at runtime via docker compose,
-# so we don't COPY sources here — keeps the image generic and lets local
-# edits show up instantly inside the container.
+# Zeabur & standalone deployment: copy all sources into the image.
+# docker-compose bind-mounts override these at runtime.
+COPY . .
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["node", "discord-bot.mjs"]
