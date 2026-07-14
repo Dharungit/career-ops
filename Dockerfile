@@ -1,5 +1,5 @@
 # career-ops container
-# Base: Playwright image with Chromium preinstalled (matches playwright@1.58.1 in package.json).
+# Base: Playwright image with Chromium preinstalled.
 # Host kernels that block Playwright's chromium installer (e.g. Ubuntu 26.04) work fine here
 # because the browser ships in the image and runs under the image's userland.
 
@@ -32,7 +32,6 @@ RUN set -eux; \
 WORKDIR /app
 
 # Prime npm deps in a layer so rebuilds stay fast.
-# Pin playwright to the version that matches the base image's bundled chromium.
 COPY package.json package-lock.json* ./
 RUN npm install --no-audit --no-fund \
  && npx playwright install chromium chromium-headless-shell 2>&1
