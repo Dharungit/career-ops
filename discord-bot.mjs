@@ -251,13 +251,23 @@ client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
   console.log(`Monitoring channel ID: ${CHANNEL_ID} (${CHANNEL_ID ? 'set' : 'NOT SET — will respond in any channel'})`);
   if (!CHANNEL_ID) console.log('To restrict to one channel, set DISCORD_CHANNEL_ID in env.');
+
+  console.log(`Connected to ${client.guilds.cache.size} guild(s):`);
+  client.guilds.cache.forEach(g => console.log(`  - ${g.name} (${g.id})`));
 });
 
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
-  if (CHANNEL_ID && message.channel.id !== CHANNEL_ID) {
-    console.log(`Skipping message in channel ${message.channel.id} (expecting ${CHANNEL_ID})`);
+  const chanId = message.channel.id;
+  const chanName = message.channel.name || '(no name)';
+  const isThread = message.channel.isThread?.() ?? false;
+  const parentId = isThread ? message.channel.parentId : null;
+  console.log(`[msg] #${chanName} (${chanId})${isThread ? ` thread of ${parentId}` : ''}: ${message.content.slice(0, 100)}`);
+
+  // Accept if channel matches OR it's a thread inside the target channel
+  if (CHANNEL_ID && chanId !== CHANNEL_ID && (!isThread || parentId !== CHANNEL_ID)) {
+    console.log(`[msg] Skipping — not target channel`);
     return;
   }
 
