@@ -35,7 +35,7 @@ WORKDIR /app
 # Pin playwright to the version that matches the base image's bundled chromium.
 COPY package.json package-lock.json* ./
 RUN npm install --no-audit --no-fund \
- && npx playwright install chromium 2>&1
+ && npx playwright install chromium chromium-headless-shell 2>&1
 
 # Zeabur & standalone deployment: copy all sources into the image.
 # docker-compose bind-mounts override these at runtime.
