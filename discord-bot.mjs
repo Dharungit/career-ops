@@ -249,21 +249,31 @@ const client = new Client({
 
 client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
+  console.log(`Monitoring channel ID: ${CHANNEL_ID} (${CHANNEL_ID ? 'set' : 'NOT SET — will respond in any channel'})`);
+  if (!CHANNEL_ID) console.log('To restrict to one channel, set DISCORD_CHANNEL_ID in env.');
 });
 
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
-  if (message.channel.id !== CHANNEL_ID) return;
+
+  if (CHANNEL_ID && message.channel.id !== CHANNEL_ID) {
+    console.log(`Skipping message in channel ${message.channel.id} (expecting ${CHANNEL_ID})`);
+    return;
+  }
 
   const urlMatch = message.content.match(/https?:\/\/[^\s]+/);
-  if (!urlMatch) return;
+  if (!urlMatch) {
+    console.log('No URL found in message, ignoring.');
+    return;
+  }
 
   const url = urlMatch[0];
+  console.log(`Found URL: ${url}`);
+
   const ctx = loadContext();
 
-  await message.react('⏳');
-
   try {
+    await message.react('⏳');
     console.log(`\n--- Processing: ${url} ---`);
 
     const jdText = await fetchJobPage(url);
